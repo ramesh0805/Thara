@@ -1,0 +1,64 @@
+import java.util.Scanner;
+
+public class CRC {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the data: ");
+        String data = scanner.nextLine();
+
+        System.out.print("Enter the divisor: ");
+        String divisor = scanner.nextLine();
+
+        String crc = performCRC(data, divisor);
+        String sentCodeWord = data + crc;
+
+        System.out.println("Sent Code Word: " + sentCodeWord);
+
+        System.out.print("Enter the received code word: ");
+        String receivedCodeWord = scanner.nextLine();
+
+        if (sentCodeWord.equals(receivedCodeWord)) {
+            System.out.println("Code word contains no error.");
+        } else {
+            System.out.println("Code word contains errors.");
+        }
+
+        scanner.close();
+    }
+
+    public static String performCRC(String data, String divisor) {
+        StringBuilder newData = new StringBuilder(data);
+        int dataLength = data.length();
+        int divisorLength = divisor.length();
+
+        for (int i = 0; i < divisorLength - 1; i++) {
+            newData.append("0");
+        }
+        data = newData.toString();
+
+        char[] dataChars = data.toCharArray();
+        for (int i = 0; i <= dataLength - divisorLength; i++) {
+            if (dataChars[i] == '1') {
+                for (int j = 0; j < divisorLength; j++) {
+                    dataChars[i + j] = (dataChars[i + j] == divisor.charAt(j)) ? '0' : '1';
+                }
+            }
+        }
+
+        StringBuilder remainder = new StringBuilder();
+        for (int i = dataLength; i < dataChars.length; i++) {
+            remainder.append(dataChars[i]);
+        }
+
+        return remainder.toString();
+    }
+}
+
+
+Enter the data: 110101
+Enter the divisor: 1011
+Sent Code Word: 110101100
+Enter the received code word: 110101100
+Code word contains no error.
