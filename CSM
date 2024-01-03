@@ -1,0 +1,54 @@
+import java.io.*;
+import java.net.*;
+
+public class Server {
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(5000); // Create a server socket on port 5000
+            System.out.println("Server waiting for client...");
+
+            Socket clientSocket = serverSocket.accept(); // Wait for a client to connect
+            System.out.println("Client connected");
+
+            // Create input and output streams for communication
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            DataOutputStream outToClient = new DataOutputStream(clientSocket.getOutputStream());
+
+            String clientMessage = inFromClient.readLine(); // Read message from client
+            System.out.println("Received from client: " + clientMessage);
+
+            // Send a response to the client
+            outToClient.writeBytes("Hello from server\n");
+
+            serverSocket.close(); // Close the server socket
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+import java.io.*;
+import java.net.*;
+
+public class Client {
+    public static void main(String[] args) {
+        try {
+            Socket clientSocket = new Socket("localhost", 5000); // Connect to the server at localhost:5000
+
+            // Create input and output streams for communication
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            // Send a message to the server
+            outToServer.writeBytes("Hello from client\n");
+
+            String serverMessage = inFromServer.readLine(); // Read response from server
+            System.out.println("Received from server: " + serverMessage);
+
+            clientSocket.close(); // Close the client socket
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
